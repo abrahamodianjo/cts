@@ -3,6 +3,7 @@ const express = require('express');
 
 const { pool } = require('./db');
 const authRouter = require('./routes/auth');
+const locationsRouter = require('./routes/locations');
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get('/health', async (req, res) => {
 });
 
 app.use('/auth', authRouter);
+app.use('/locations', locationsRouter);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

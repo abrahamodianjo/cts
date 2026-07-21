@@ -1,1 +1,21 @@
-cts-backend listening on port 3000
+node:events:486
+      throw er; //SyntaxError: Bad control character in string literal in JSON at position 56 (line 1 column 57)
+    at JSON.parse (<anonymous>)
+    at parse (C:\Users\odian\cts\cts-backend\node_modules\body-parser\lib\types\json.js:96:19)
+    at C:\Users\odian\cts\cts-backend\node_modules\body-parser\lib\read.js:128:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:228:14)
+    at invokeCallback (C:\Users\odian\cts\cts-backend\node_modules\raw-body\index.js:238:16)
+    at done (C:\Users\odian\cts\cts-backend\node_modules\raw-body\index.js:227:7)
+    at IncomingMessage.onEnd (C:\Users\odian\cts\cts-backend\node_modules\raw-body\index.js:287:7)
+    at IncomingMessage.emit (node:events:508:28)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+ocess.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v24.14.1

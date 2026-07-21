@@ -9,7 +9,18 @@
       "Bash(npm install *)",
       "Bash(curl -s -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\" http://localhost:3000/health)",
       "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X POST http://localhost:3000/auth/register -H 'Content-Type: application/json' -d '{ *)",
-      "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{ *)"
+      "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(powershell -Command \"Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, Path\")",
+      "Bash(powershell -Command \"Stop-Process -Id 30016 -Force\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/health)",
+      "Bash(node src/index.js)",
+      "Bash(disown)",
+      "Bash(echo \"started with pid $!\")",
+      "Bash(export TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYTMyZWI3Ny03YzQxLTRhZTEtYTIxMi1lYzkxNmEzYWIzYTciLCJvcmdhbml6YXRpb25faWQiOiJmYTIzOTIwNS02ZDQ5LTQ5YzEtYWQ0Mi05ZWVhNmIxMjExMzAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODQ2NzQ3NzgsImV4cCI6MTc4NDY3NTY3OH0.q1jWW--qDVopJXrjiKLjT6NEUCNkSe-ujKn5gclDkak\")",
+      "Bash(echo \"--- no token ---\")",
+      "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\\\\n\" http://localhost:3000/locations)",
+      "Bash(echo \"--- create location ---\")",
+      "Bash(curl -s -w '\\\\nHTTP:%{http_code}\\\\n' -X POST http://localhost:3000/locations -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYTMyZWI3Ny03YzQxLTRhZTEtYTIxMi1lYzkxNmEzYWIzYTciLCJvcmdhbml6YXRpb25faWQiOiJmYTIzOTIwNS02ZDQ5LTQ5YzEtYWQ0Mi05ZWVhNmIxMjExMzAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODQ2NzQ3NzgsImV4cCI6MTc4NDY3NTY3OH0.q1jWW--qDVopJXrjiKLjT6NEUCNkSe-ujKn5gclDkak' -H 'Content-Type: application/json' -d '{ *)"
     ]
   }
 }
