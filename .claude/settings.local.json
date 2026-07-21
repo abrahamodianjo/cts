@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql --version)",
+      "Bash(npm --version)",
+      "Read(//c/Program Files/PostgreSQL/**)",
+      "Bash(powershell -Command 'Get-Service | Where-Object {$_.Name -like '\\\\''*postgres*'\\\\''}')",
+      "Bash(docker --version)",
+      "Bash(npm install *)",
+      "Bash(curl -s -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\" http://localhost:3000/health)",
+      "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X POST http://localhost:3000/auth/register -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{ *)"
+    ]
+  }
+}
