@@ -20,7 +20,10 @@
       "Bash(echo \"--- no token ---\")",
       "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\\\\n\" http://localhost:3000/locations)",
       "Bash(echo \"--- create location ---\")",
-      "Bash(curl -s -w '\\\\nHTTP:%{http_code}\\\\n' -X POST http://localhost:3000/locations -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYTMyZWI3Ny03YzQxLTRhZTEtYTIxMi1lYzkxNmEzYWIzYTciLCJvcmdhbml6YXRpb25faWQiOiJmYTIzOTIwNS02ZDQ5LTQ5YzEtYWQ0Mi05ZWVhNmIxMjExMzAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODQ2NzQ3NzgsImV4cCI6MTc4NDY3NTY3OH0.q1jWW--qDVopJXrjiKLjT6NEUCNkSe-ujKn5gclDkak' -H 'Content-Type: application/json' -d '{ *)"
+      "Bash(curl -s -w '\\\\nHTTP:%{http_code}\\\\n' -X POST http://localhost:3000/locations -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkYTMyZWI3Ny03YzQxLTRhZTEtYTIxMi1lYzkxNmEzYWIzYTciLCJvcmdhbml6YXRpb25faWQiOiJmYTIzOTIwNS02ZDQ5LTQ5YzEtYWQ0Mi05ZWVhNmIxMjExMzAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3ODQ2NzQ3NzgsImV4cCI6MTc4NDY3NTY3OH0.q1jWW--qDVopJXrjiKLjT6NEUCNkSe-ujKn5gclDkak' -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(powershell -Command \"Get-Process node -ErrorAction SilentlyContinue | Select-Object Id\")",
+      "Bash(powershell -Command \"Stop-Process -Id 27296 -Force\")",
+      "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\\\\n\" http://localhost:3000/health)"
     ]
   }
 }
