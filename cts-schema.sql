@@ -91,7 +91,7 @@ CREATE TABLE shift_visits (
     planned_start   TIMESTAMPTZ NOT NULL,
     planned_end     TIMESTAMPTZ NOT NULL,
     status          TEXT NOT NULL DEFAULT 'planned'
-                      CHECK (status IN ('planned','in_progress','completed','missed')),
+                      CHECK (status IN ('planned','in_progress','completed','missed','missed_clock_out')),
     UNIQUE (shift_id, visit_order),
     CHECK (planned_end > planned_start)
 );

@@ -4,6 +4,9 @@ const express = require('express');
 const { pool } = require('./db');
 const authRouter = require('./routes/auth');
 const locationsRouter = require('./routes/locations');
+const shiftsRouter = require('./routes/shifts');
+const attendanceRouter = require('./routes/attendance');
+const { sweepMissedClockOuts } = require('./services/attendanceSweep');
 
 const app = express();
 app.use(express.json());
@@ -19,6 +22,19 @@ app.get('/health', async (req, res) => {
 
 app.use('/auth', authRouter);
 app.use('/locations', locationsRouter);
+app.use('/shifts', shiftsRouter);
+app.use('/attendance', attendanceRouter);
+
+const MISSED_CLOCK_OUT_SWEEP_INTERVAL_MS = 15 * 60 * 1000;
+setInterval(() => {
+  sweepMissedClockOuts()
+    .then((swept) => {
+      if (swept.length > 0) {
+        console.log(`missed-clock-out sweep: marked ${swept.length} visit(s)`);
+      }
+    })
+    .catch((err) => console.error('missed-clock-out sweep failed', err));
+}, MISSED_CLOCK_OUT_SWEEP_INTERVAL_MS);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
