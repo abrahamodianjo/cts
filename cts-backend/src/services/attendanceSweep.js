@@ -1,4 +1,5 @@
 const { pool } = require('../db');
+const { TERMINAL_VISIT_STATUSES } = require('../utils/visitStatus');
 
 const MISSED_CLOCK_OUT_HOURS = 12;
 
@@ -18,7 +19,25 @@ async function sweepMissedClockOuts(organizationId) {
   query += ` RETURNING sv.*`;
 
   const result = await pool.query(query, params);
-  return result.rows;
+  const sweptVisits = result.rows;
+
+  const shiftIds = [...new Set(sweptVisits.map((v) => v.shift_id))];
+  if (shiftIds.length > 0) {
+    await pool.query(
+      `UPDATE shifts s
+       SET status = 'completed'
+       WHERE s.id = ANY($1::uuid[])
+         AND s.status NOT IN ('completed', 'cancelled')
+         AND NOT EXISTS (
+           SELECT 1 FROM shift_visits sv2
+           WHERE sv2.shift_id = s.id
+             AND sv2.status != ALL($2::text[])
+         )`,
+      [shiftIds, TERMINAL_VISIT_STATUSES]
+    );
+  }
+
+  return sweptVisits;
 }
 
 module.exports = { sweepMissedClockOuts, MISSED_CLOCK_OUT_HOURS };

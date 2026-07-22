@@ -5,6 +5,7 @@ const { requireAuth } = require('../middleware/auth');
 const { requireRole } = require('../middleware/requireRole');
 const { haversineDistanceMetres } = require('../utils/geo');
 const { sweepMissedClockOuts } = require('../services/attendanceSweep');
+const { TERMINAL_VISIT_STATUSES } = require('../utils/visitStatus');
 
 const router = express.Router();
 
@@ -144,8 +145,8 @@ router.post('/scan', async (req, res) => {
     if (event_type === 'clock_out') {
       const remaining = await client.query(
         `SELECT count(*)::int AS remaining FROM shift_visits
-         WHERE shift_id = $1 AND status NOT IN ('completed', 'missed')`,
-        [visit.shift_id]
+         WHERE shift_id = $1 AND status != ALL($2::text[])`,
+        [visit.shift_id, TERMINAL_VISIT_STATUSES]
       );
       if (remaining.rows[0].remaining === 0) {
         newShiftStatus = 'completed';
