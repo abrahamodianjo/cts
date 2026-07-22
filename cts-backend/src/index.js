@@ -6,6 +6,7 @@ const authRouter = require('./routes/auth');
 const locationsRouter = require('./routes/locations');
 const shiftsRouter = require('./routes/shifts');
 const attendanceRouter = require('./routes/attendance');
+const statusRouter = require('./routes/status');
 const { sweepMissedClockOuts } = require('./services/attendanceSweep');
 
 const app = express();
@@ -24,6 +25,7 @@ app.use('/auth', authRouter);
 app.use('/locations', locationsRouter);
 app.use('/shifts', shiftsRouter);
 app.use('/attendance', attendanceRouter);
+app.use('/status', statusRouter);
 
 const MISSED_CLOCK_OUT_SWEEP_INTERVAL_MS = 15 * 60 * 1000;
 setInterval(() => {

@@ -21,21 +21,25 @@ async function sweepMissedClockOuts(organizationId) {
   const result = await pool.query(query, params);
   const sweptVisits = result.rows;
 
-  const shiftIds = [...new Set(sweptVisits.map((v) => v.shift_id))];
-  if (shiftIds.length > 0) {
-    await pool.query(
-      `UPDATE shifts s
-       SET status = 'completed'
-       WHERE s.id = ANY($1::uuid[])
-         AND s.status NOT IN ('completed', 'cancelled')
-         AND NOT EXISTS (
-           SELECT 1 FROM shift_visits sv2
-           WHERE sv2.shift_id = s.id
-             AND sv2.status != ALL($2::text[])
-         )`,
-      [shiftIds, TERMINAL_VISIT_STATUSES]
-    );
+  // Reconcile shift status across every non-terminal shift in scope, not just the
+  // ones this run touched — catches any shift left stranded by a rollup that ran
+  // before this reconciliation existed, in addition to the ones just swept.
+  const rollupParams = [TERMINAL_VISIT_STATUSES];
+  let rollupQuery = `
+    UPDATE shifts s
+    SET status = 'completed'
+    WHERE s.status NOT IN ('completed', 'cancelled')
+      AND NOT EXISTS (
+        SELECT 1 FROM shift_visits sv2
+        WHERE sv2.shift_id = s.id
+          AND sv2.status != ALL($1::text[])
+      )
+      AND EXISTS (SELECT 1 FROM shift_visits sv3 WHERE sv3.shift_id = s.id)`;
+  if (organizationId) {
+    rollupParams.push(organizationId);
+    rollupQuery += ` AND s.organization_id = $${rollupParams.length}`;
   }
+  await pool.query(rollupQuery, rollupParams);
 
   return sweptVisits;
 }
