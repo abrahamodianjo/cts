@@ -55,9 +55,20 @@ router.get('/live', requireRole(['admin', 'manager']), async (req, res) => {
       `SELECT DISTINCT ON (s.staff_id)
          u.id AS staff_id, u.first_name, u.last_name, u.email,
          s.id AS shift_id, s.status AS shift_status, s.scheduled_start, s.scheduled_end,
+         loc.id AS location_id, loc.name AS location_name,
+         lastclock.event_time AS clocked_in_at,
          sl.status AS current_status, sl.changed_at AS status_changed_at
        FROM shifts s
        JOIN users u ON u.id = s.staff_id
+       LEFT JOIN LATERAL (
+         SELECT ae.location_id, ae.event_time
+         FROM attendance_events ae
+         JOIN shift_visits sv ON sv.id = ae.shift_visit_id
+         WHERE sv.shift_id = s.id AND ae.event_type = 'clock_in'
+         ORDER BY ae.event_time DESC
+         LIMIT 1
+       ) lastclock ON true
+       LEFT JOIN locations loc ON loc.id = lastclock.location_id
        LEFT JOIN LATERAL (
          SELECT status, changed_at FROM status_log
          WHERE staff_id = s.staff_id

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 
 const { pool } = require('./db');
 const authRouter = require('./routes/auth');
@@ -10,6 +11,7 @@ const statusRouter = require('./routes/status');
 const { sweepMissedClockOuts } = require('./services/attendanceSweep');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get('/health', async (req, res) => {

@@ -92,4 +92,49 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/refresh', async (req, res) => {
+  const { refresh_token } = req.body;
+  if (!refresh_token) {
+    return res.status(400).json({ error: 'missing_fields' });
+  }
+
+  try {
+    const tokenHash = crypto.createHash('sha256').update(refresh_token).digest('hex');
+    const result = await pool.query(
+      `SELECT rt.id, rt.user_id, rt.expires_at, rt.revoked,
+              u.organization_id, u.role, u.is_active
+       FROM refresh_tokens rt
+       JOIN users u ON u.id = rt.user_id
+       WHERE rt.token_hash = $1`,
+      [tokenHash]
+    );
+    const row = result.rows[0];
+    if (!row || row.revoked || !row.is_active || new Date(row.expires_at) < new Date()) {
+      return res.status(401).json({ error: 'invalid_refresh_token' });
+    }
+
+    await pool.query(`UPDATE refresh_tokens SET revoked = true WHERE id = $1`, [row.id]);
+
+    const newRefreshToken = crypto.randomBytes(48).toString('hex');
+    const newRefreshTokenHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
+    const expiresInDays = Number(process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS || 30);
+    await pool.query(
+      `INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
+       VALUES ($1, $2, now() + ($3 || ' days')::interval)`,
+      [row.user_id, newRefreshTokenHash, expiresInDays]
+    );
+
+    const accessToken = signAccessToken({
+      id: row.user_id,
+      organization_id: row.organization_id,
+      role: row.role,
+    });
+
+    res.json({ access_token: accessToken, refresh_token: newRefreshToken });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
 module.exports = router;
